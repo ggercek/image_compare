@@ -13,7 +13,9 @@ Image Compare
         :target: https://image-compare.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-
+.. image:: https://pyup.io/repos/github/ggercek/image-compare/shield.svg
+     :target: https://pyup.io/repos/github/ggercek/image-compare/
+     :alt: Updates
 
 
 CLI tool to compare image similarities.
