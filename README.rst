@@ -14,7 +14,7 @@ Image Compare
         :alt: Documentation Status
 
 .. image:: https://pyup.io/repos/github/ggercek/image-compare/shield.svg
-     :target: https://pyup.io/repos/github/ggercek/image-compare/
+     :target: https://pyup.io/repos/github/ggercek/image_compare/
      :alt: Updates
 
 
