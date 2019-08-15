@@ -13,8 +13,8 @@ Image Compare
         :target: https://image-compare.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/ggercek/image-compare/shield.svg
-     :target: https://pyup.io/repos/github/ggercek/image-compare/
+.. image:: https://pyup.io/repos/github/ggercek/image_compare/shield.svg
+     :target: https://pyup.io/repos/github/ggercek/image_compare/
      :alt: Updates
 
 
