@@ -8,7 +8,7 @@ import os
 import unittest
 from image_compare.util import get_timestamp_str
 from image_compare.models import FilePair
-from image_compare.file_handlers import CSVInputHandler, CSVOutputHandler
+from image_compare.file_handlers import CSVInputHandler, CSVOutputHandler, FileHandlerFactory
 from image_compare.exceptions import FileError
 
 
@@ -106,3 +106,30 @@ class TestCSVOutputHandler(unittest.TestCase):
         # Read temp file anc check entry count
         csv_input_handler = CSVInputHandler(tmp_file)
         assert len(csv_input_handler.read()) == len(self.sample_pairs)
+
+
+class TestFileHandlerFactory(unittest.TestCase):
+    """Tests for `CSVInputHandler` class."""
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        self.factory = FileHandlerFactory()
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_input_handler(self):
+        input_handler = self.factory.getInputHandler("tests/files/dummy.csv")
+        assert input_handler is not None
+
+    def test_input_invalid_extension(self):
+        with self.assertRaises(FileError):
+            input_handler = self.factory.getInputHandler("tests/files/dummy.json")
+
+    def test_output_handler(self):
+        output_handler = self.factory.getOutputHandler("tests/files/dummy.csv")
+        assert output_handler is not None
+
+    def test_output_invalid_extension(self):
+        with self.assertRaises(FileError):
+            output_handler = self.factory.getOutputHandler("tests/files/dummy.json")

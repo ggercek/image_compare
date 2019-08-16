@@ -3,10 +3,33 @@
     Currently supports only CSV format
 """
 import csv
+import pathlib
 import os.path
+from collections import defaultdict
 from image_compare.models import FilePair
 from image_compare.util import clean_string
 from image_compare.exceptions import FileError
+
+
+class FileHandlerFactory:
+    def __init__(self):
+        self.input_handlers = defaultdict(None, {".csv": CSVInputHandler})
+        self.output_handlers = defaultdict(None, {".csv": CSVOutputHandler})
+
+    def getInputHandler(self, filename, *args, **kwargs):
+        return self.__getFileHandler(self.input_handlers, filename, *args, **kwargs)
+
+    def getOutputHandler(self, filename, *args, **kwargs):
+        return self.__getFileHandler(self.output_handlers, filename, *args, **kwargs)
+
+    def __getFileHandler(self, handler_dict, filename, *args, **kwargs):
+        # TODO: move os.path calls to pathlib if possible.
+        extension = pathlib.Path(filename).suffix
+        handler = self.input_handlers.get(extension)
+        if handler:
+            return handler(filename, *args, **kwargs)
+        else:
+            raise FileError(filename, f"{extension} is not a supported type")
 
 
 class CSVInputHandler:
