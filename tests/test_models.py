@@ -19,8 +19,8 @@ class TestModelFilePair(unittest.TestCase):
 
     def test_initial_values(self):
         fp = models.FilePair("aa.png", "bb.png")
-        assert fp.file1 == "aa.png"
-        assert fp.file2 == "bb.png"
+        assert fp.image1 == "aa.png"
+        assert fp.image2 == "bb.png"
         assert fp.similarity == -1.0
         assert fp.elapsed == -1.0
         assert fp.line_num == -1

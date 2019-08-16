@@ -5,8 +5,9 @@
 
 
 import unittest
-from image_compare import file_handlers
-from image_compare.exceptions import IOICError
+from image_compare.models import FilePair
+from image_compare.file_handlers import CSVInputHandler, CSVOutputHandler
+from image_compare.exceptions import FileError
 
 
 def get_number_of_skipped_pairs(records):
@@ -14,7 +15,7 @@ def get_number_of_skipped_pairs(records):
     return len([pair for pair in records if pair.skipped])
 
 
-class TestModelFilePair(unittest.TestCase):
+class TestCSVInputHandler(unittest.TestCase):
     """Tests for `CSVInputHandler` class."""
 
     def setUp(self):
@@ -24,28 +25,63 @@ class TestModelFilePair(unittest.TestCase):
         """Tear down test fixtures, if any."""
 
     def test_initial_values(self):
-        csv_handler = file_handlers.CSVInputHandler("files/tests/input1.csv")
+        csv_handler = CSVInputHandler("files/tests/input1.csv")
         assert csv_handler.filename == "files/tests/input1.csv"
         assert csv_handler.delimiter == ','
         assert csv_handler.quotechar == '"'
         assert len(csv_handler.records) == 0
 
     def test_missing_input_file(self):
-        csv_handler = file_handlers.CSVInputHandler("files/tests/there_no_such_file.csv")
-        with self.assertRaises(IOICError):
+        csv_handler = CSVInputHandler("files/tests/there_no_such_file.csv")
+        with self.assertRaises(FileError):
             csv_handler.read()
 
     def test_input_file_with_2_empty_file_names(self):
-        csv_handler = file_handlers.CSVInputHandler("files/tests/input1-with-2-missing-elements.csv")
+        csv_handler = CSVInputHandler("files/tests/input1-with-2-missing-elements.csv")
         csv_handler.read()
-        assert get_number_of_skipped_pairs(csv_handler.records)  == 2
+        assert get_number_of_skipped_pairs(csv_handler.records) == 2
 
     def test_input_file_with_4_empty_file_names(self):
-        csv_handler = file_handlers.CSVInputHandler("files/tests/input1-with-4-missing-elements.csv")
+        csv_handler = CSVInputHandler("files/tests/input1-with-4-missing-elements.csv")
         csv_handler.read()
         assert get_number_of_skipped_pairs(csv_handler.records) == 4
 
     def test_reading_input_file(self):
-        csv_handler = file_handlers.CSVInputHandler("files/tests/input1.csv")
+        csv_handler = CSVInputHandler("files/tests/input1.csv")
         records = csv_handler.read()
         assert len(records) == 4
+
+    def test_read_and_line_nums_of_file_pairs(self):
+        csv_handler = CSVInputHandler("files/tests/input1.csv")
+        records = csv_handler.read()
+        # check the line_num assignment, should start with 1
+        assert set([pair.line_num for pair in records]) == set([1, 2, 3, 4])
+
+
+class TestCSVOutputHandler(unittest.TestCase):
+    """Tests for `CSVOutputHandler` class."""
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        self.sample_pairs = [FilePair("image1","image2",), FilePair("image3", "image4", ), FilePair("image5", "image6")]
+        self.headers = ["image1", "image2"]
+        self.dummy_file = "files/tests/dummy.csv"
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_output_filename_is_a_folder(self):
+        csv_handler = CSVOutputHandler("files/", self.headers)
+        with self.assertRaises(FileError):
+            csv_handler.write(self.sample_pairs)
+
+    def test_output_filename_already_exist_no_overwrite(self):
+        csv_handler = CSVOutputHandler(self.dummy_file, self.headers)
+        with self.assertRaises(FileError):
+            csv_handler.write(self.sample_pairs)
+
+    def test_output_filename_already_exist_with_overwrite(self):
+        csv_handler = CSVOutputHandler(self.dummy_file, self.headers)
+        csv_handler.write(self.sample_pairs, overwrite=True)
+        csv_input_handler = CSVInputHandler(self.dummy_file)
+        assert len(csv_input_handler.read()) == len(self.sample_pairs)

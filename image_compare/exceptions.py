@@ -3,7 +3,7 @@ class ICError(Exception):
     pass
 
 
-class IOICError(ICError):
+class FileError(ICError):
     """Exception for file IO errors."""
     def __init__(self, filename, message):
         self.filename = filename
@@ -14,3 +14,8 @@ class IOICError(ICError):
 
     def __str__(self):
         return f"{self.message}: {self.filename}"
+
+
+class ArgumentError(ICError):
+    def __init__(self, message):
+        self.message = message
