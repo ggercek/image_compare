@@ -14,8 +14,11 @@ Image Compare
         :alt: Documentation Status
 
 .. image:: https://pyup.io/repos/github/ggercek/image_compare/shield.svg
-     :target: https://pyup.io/repos/github/ggercek/image_compare/
-     :alt: Updates
+        :target: https://pyup.io/repos/github/ggercek/image_compare/
+        :alt: Updates
+
+.. image:: https://coveralls.io/repos/github/ggercek/image_compare/badge.svg?branch=master
+        :target: https://coveralls.io/github/ggercek/image_compare?branch=master
 
 
 CLI tool to compare image similarities.
