@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module holds utility functions"""
+from datetime import datetime
 
 
 def clean_string(val, default=""):
@@ -8,3 +9,7 @@ def clean_string(val, default=""):
         if val:
             return val
     return default
+
+
+def get_timestamp_str():
+    return datetime.now().strftime("%Y%m%d_%H%M%S_%f")

@@ -59,7 +59,8 @@ class CSVOutputHandler:
                 raise FileError(self.filename, "File already exists. Use overwrite=True if you want to replace it.")
 
         with open(self.filename, 'w', newline='') as csv_file:
-            writer = csv.writer(csv_file, delimiter=self.delimiter, quotechar=self.quotechar)
+            writer = csv.writer(csv_file, delimiter=self.delimiter,
+                                quotechar=self.quotechar, quoting=csv.QUOTE_NONNUMERIC)
             writer.writerow(self.headers)
             writer.writerows([self.to_list(pair.__dict__) for pair in pairs])
 

@@ -4,7 +4,9 @@
 """Tests for `file_handlers` module."""
 
 
+import os
 import unittest
+from image_compare.util import get_timestamp_str
 from image_compare.models import FilePair
 from image_compare.file_handlers import CSVInputHandler, CSVOutputHandler
 from image_compare.exceptions import FileError
@@ -63,12 +65,25 @@ class TestCSVOutputHandler(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.sample_pairs = [FilePair("image1","image2",), FilePair("image3", "image4", ), FilePair("image5", "image6")]
+        self.temp_files = []
+        self.temp_file_folder = "files/tests/tmp"
         self.headers = ["image1", "image2"]
         self.dummy_file = "files/tests/dummy.csv"
+        self.sample_pairs = [FilePair("image1","image2",), FilePair("image3", "image4", ), FilePair("image5", "image6")]
+
+        # Create the temp folder if
+        if not os.path.exists(self.temp_file_folder):
+            os.makedirs(self.temp_file_folder)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
+        for temp_file in self.temp_files:
+            os.remove(temp_file)
+
+    def get_temp_file_name(self):
+        tmp_file = os.path.join(self.temp_file_folder, f"output_{get_timestamp_str()}.csv")
+        self.temp_files.append(tmp_file)
+        return tmp_file
 
     def test_output_filename_is_a_folder(self):
         csv_handler = CSVOutputHandler("files/", self.headers)
@@ -81,7 +96,13 @@ class TestCSVOutputHandler(unittest.TestCase):
             csv_handler.write(self.sample_pairs)
 
     def test_output_filename_already_exist_with_overwrite(self):
-        csv_handler = CSVOutputHandler(self.dummy_file, self.headers)
-        csv_handler.write(self.sample_pairs, overwrite=True)
-        csv_input_handler = CSVInputHandler(self.dummy_file)
+        tmp_file = self.get_temp_file_name()
+        # Create a temp file
+        csv_handler = CSVOutputHandler(tmp_file, self.headers)
+        csv_handler.write(self.sample_pairs)
+        # Write again to temp file with overwrite
+        csv_handler2 = CSVOutputHandler(tmp_file, self.headers)
+        csv_handler2.write(self.sample_pairs, overwrite=True)
+        # Read temp file anc check entry count
+        csv_input_handler = CSVInputHandler(tmp_file)
         assert len(csv_input_handler.read()) == len(self.sample_pairs)
