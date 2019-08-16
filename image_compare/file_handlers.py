@@ -25,7 +25,7 @@ class FileHandlerFactory:
     def __getFileHandler(self, handler_dict, filename, *args, **kwargs):
         # TODO: move os.path calls to pathlib if possible.
         extension = pathlib.Path(filename).suffix
-        handler = self.input_handlers.get(extension)
+        handler = handler_dict.get(extension)
         if handler:
             return handler(filename, *args, **kwargs)
         else:
@@ -33,10 +33,11 @@ class FileHandlerFactory:
 
 
 class CSVInputHandler:
-    def __init__(self, filename, delimiter=',', quotechar='"'):
+    def __init__(self, filename, delimiter=',', quotechar='"', default_filename="<NO_FILE_GIVEN>"):
         self.filename = filename
         self.delimiter = delimiter
         self.quotechar = quotechar
+        self.default_filename = default_filename
         self.records = []
 
     def read(self):
@@ -52,10 +53,10 @@ class CSVInputHandler:
         with open(self.filename, 'r') as csv_file:
             file_pair_reader = csv.DictReader(csv_file, delimiter=self.delimiter, quotechar=self.quotechar)
             for line_num, row in enumerate(file_pair_reader):
-                image1 = clean_string(row["image1"])
-                image2 = clean_string(row["image2"])
+                image1 = clean_string(row["image1"], default=self.default_filename)
+                image2 = clean_string(row["image2"], default=self.default_filename)
                 # If the input is missing just skip the file and log it as warning
-                skip = (image1 == "") | (image2 == "")
+                skip = (image1 == self.default_filename) | (image2 == self.default_filename)
                 self.records.append(FilePair(image1=image1, image2=image2, line_num=line_num + 1, skipped=skip))
 
 

@@ -118,6 +118,10 @@ class TestFileHandlerFactory(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
+    def test_return_type(self):
+        assert type(self.factory.getInputHandler("tests/files/dummy.csv")) == CSVInputHandler
+        assert type(self.factory.getOutputHandler("tests/files/dummy.csv", headers=[])) == CSVOutputHandler
+
     def test_input_handler(self):
         input_handler = self.factory.getInputHandler("tests/files/dummy.csv")
         assert input_handler is not None
@@ -127,7 +131,7 @@ class TestFileHandlerFactory(unittest.TestCase):
             input_handler = self.factory.getInputHandler("tests/files/dummy.json")
 
     def test_output_handler(self):
-        output_handler = self.factory.getOutputHandler("tests/files/dummy.csv")
+        output_handler = self.factory.getOutputHandler("tests/files/dummy.csv", headers=[])
         assert output_handler is not None
 
     def test_output_invalid_extension(self):
