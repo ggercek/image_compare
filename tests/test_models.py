@@ -8,7 +8,7 @@ import unittest
 from image_compare import models
 
 
-class TestModelFilePair(unittest.TestCase):
+class TestModels(unittest.TestCase):
     """Tests for `FilePair` class."""
 
     def setUp(self):
@@ -17,7 +17,7 @@ class TestModelFilePair(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    def test_initial_values(self):
+    def test_file_pair_initial_values(self):
         fp = models.FilePair("aa.png", "bb.png")
         assert fp.image1 == "aa.png"
         assert fp.image2 == "bb.png"
@@ -25,3 +25,10 @@ class TestModelFilePair(unittest.TestCase):
         assert fp.elapsed == -1.0
         assert fp.line_num == -1
         assert fp.skipped is False
+
+    def test_config_initial_values(self):
+        config = models.Config("input.csv", "output.csv")
+        assert config.input_file == "input.csv"
+        assert config.output_file == "output.csv"
+        assert config.distance == "ssim"
+        assert config.log_level == "INFO"

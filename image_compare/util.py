@@ -1,4 +1,5 @@
-"""Module holds various helper functions"""
+# -*- coding: utf-8 -*-
+"""Module holds utility functions"""
 
 
 def clean_string(val, default=""):
