@@ -30,5 +30,6 @@ class TestModels(unittest.TestCase):
         config = models.Config("input.csv", "output.csv")
         assert config.input_file == "input.csv"
         assert config.output_file == "output.csv"
+        assert config.overwrite_output is False
         assert config.distance == "ssim"
         assert config.log_level == "INFO"

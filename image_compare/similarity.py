@@ -94,7 +94,7 @@ def __check_files_and_open(pair, same_size_enforce=True):
     if same_size_enforce and image1.size != image2.size:
         pair.skipped = True
         raise ArgumentError(f"Images should be same size, "
-                            "[line:{pair.line_num}]:{pair.image1}[{image1.size}], {pair.image2}[image2.size)]")
+                            f"[line:{pair.line_num}]:{pair.image1}[{image1.size}], {pair.image2}[image2.size)]")
 
     return image1, image2
 
@@ -105,8 +105,7 @@ def calculate_ssmi_similarity(pair):
     """Compute the mean structural similarity index between two images.
 
     :param pair: image pair to compare
-    :return: similarity : float
-        the similarity value of given image pair
+    :return:
     """
     image1, image2 = __check_files_and_open(pair)
     img1f = img_as_float(image1)
@@ -121,8 +120,7 @@ def calculate_nrmse_similarity(pair):
     """Compute the normalized root mean-squared error (NRMSE) between two images.
 
     :param pair: image pair to compare
-    :return: similarity : float
-        the similarity value of given image pair
+    :return:
     """
     image1, image2 = __check_files_and_open(pair)
     img1f = img_as_float(image1)
@@ -137,8 +135,7 @@ def calculate_mse_similarity(pair):
     """Compute the mean-squared error between two images.
 
     :param pair: image pair to compare
-    :return: similarity : float
-        the similarity value of given image pair
+    :return:
     """
     image1, image2 = __check_files_and_open(pair)
     similarity = mse(image1, image2)
