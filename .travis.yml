@@ -13,3 +13,6 @@ script: tox
 #    tags: true
 #    repo: ggercek/image_compare
 #    python: 3.6
+after_success:
+- codecov
+- coverall

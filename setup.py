@@ -15,7 +15,7 @@ requirements = ['Click>=6.0', 'scikit-image>=0.15.0', 'scipy>=1.3.1']
 
 setup_requirements = [ ]
 
-test_requirements = [ ]
+test_requirements = ["codecov", ]
 
 setup(
     author="Gurcan Gercek",

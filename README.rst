@@ -27,6 +27,13 @@ CLI tool to compare image similarities.
 * Free software: GNU General Public License v3
 * Documentation: https://image-compare.readthedocs.io.
 
+Test Data
+--------
+
+* Toronto Cityscape Photo by Alex Shutin on Unsplash
+* Cat Photo by Yerlin Matu on Unsplash
+* Nature1 Photo by eberhard grossgasteiger on Unsplash
+* Nature2 Photo by Daniel Roe on Unsplash
 
 Features
 --------
