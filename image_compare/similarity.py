@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """This module contains the wrapper classes for scikit-image library methods"""
 
 import time

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ This module contains the file handler classes.
     Currently supports only CSV format
 """
