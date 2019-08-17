@@ -4,7 +4,6 @@
 import time
 import imagehash
 from PIL import Image
-from functools import wraps
 from collections import defaultdict
 from skimage import io, img_as_float
 from skimage.measure import compare_ssim as ssim
@@ -160,6 +159,7 @@ def calculate_mse_similarity(pair):
     similarity = mse(image1, image2)
     pair.similarity = round(similarity / float(image1.shape[0] * image1.shape[1]), 3)
 
+
 @register_distance(name="dhash")
 @TimeSimilarityCalculation()
 def calculate_dhash_similarity(pair, hash_size=16):
@@ -173,5 +173,7 @@ def calculate_dhash_similarity(pair, hash_size=16):
         pair.similarity = float(image1 - image2) / hash_size
     finally:
         # close the image files
-        if image1_handle: image1_handle.close()
-        if image2_handle: image2_handle.close()
+        if image1_handle:
+            image1_handle.close()
+        if image2_handle:
+            image2_handle.close()

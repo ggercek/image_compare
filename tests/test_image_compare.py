@@ -24,12 +24,12 @@ class TestImage_compare(unittest.TestCase):
     def test_cli_error_no_args(self):
         result = self.runner.invoke(cli.main, [])
         assert result.exit_code == 2, result.exit_code
-        assert 'Missing argument "input_file"' in result.output, result.output
+        assert 'Missing argument "INPUT_FILE"' in result.output, result.output
 
     def test_cli_error_no_output(self):
         result = self.runner.invoke(cli.main, ["files/tests/dummy.csv"])
         assert result.exit_code == 2, result.exit_code
-        assert 'Missing argument "output_file"' in result.output, result.output
+        assert 'Missing argument "OUTPUT_FILE"' in result.output, result.output
 
     def test_cli_error_invalid_distance(self):
         args = ["files/tests/dummy.csv", "output.csv", "--distance=NoSuchDistance"]

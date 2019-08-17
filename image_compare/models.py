@@ -25,5 +25,6 @@ class Config:
         self.log_level = log_level
 
     def __repr__(self):
-        return f"Config [input:{self.input_file}, output:{self.output_file}, overwrite_output: {self.overwrite_output}, " \
-               f"quiet:{self.quiet}, distance:{self.distance}, log_level:{self.log_level}]"
+        return f"Config [input:{self.input_file}, output:{self.output_file}, " \
+               f"overwrite_output: {self.overwrite_output}, quiet:{self.quiet}, " \
+               f"distance:{self.distance}, log_level:{self.log_level}]"

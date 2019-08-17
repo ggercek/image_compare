@@ -11,7 +11,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=6.0', 'scikit-image>=0.15.0', 'scipy>=1.3.1']
+requirements = ['Click>=6.0', 'scikit-image>=0.15.0', 'scipy>=1.3.1', 'imagehash==4.0']
 
 setup_requirements = [ ]
 
