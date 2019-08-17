@@ -76,14 +76,15 @@ def __real_main(config):
             output_handler.write(pairs, config.overwrite_output)
             logging.info(f"Successfully saved {len(pairs)} pair(s).")
         except FileError as fe:
+            # In case of an error write results to log file
             logging.error(f"Error occured while writing to output file {fe}")
-            logging.warning("To keep the results, pairs will be dumped here")
-            logging.warning('\n'+'\n'.join([str(p) for p in pairs]))
+            logging.error("To keep the results, pairs will be dumped here")
+            logging.error('\n'+'\n'.join([str(p) for p in pairs]))
             return ExitCodes.ARGUMENT_ERROR
 
     except Exception as e:
         # Catch all statement in case we missed something
-        logging.exception(f"Unhandled exception occurred: {e}")
+        logging.exception(f"Unhandled exception occurred, exiting...\n {e}")
         return ExitCodes.UNKNOWN_ERROR
 
     return 0
@@ -95,9 +96,10 @@ def main(config):
     logging.basicConfig(filename='image_compare.log', filemode='a', level=log_levels[config.log_level],
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
-    console = logging.StreamHandler()
-    console.setLevel(config.log_level)
-    logging.getLogger('').addHandler(console)
+    if not config.quiet:
+        console = logging.StreamHandler()
+        console.setLevel(config.log_level)
+        logging.getLogger('').addHandler(console)
 
     logging.info(f"Starting with {config}")
     exit_value = __real_main(config)

@@ -31,5 +31,6 @@ class TestModels(unittest.TestCase):
         assert config.input_file == "input.csv"
         assert config.output_file == "output.csv"
         assert config.overwrite_output is False
+        assert config.quiet is False
         assert config.distance == "ssim"
         assert config.log_level == "INFO"
