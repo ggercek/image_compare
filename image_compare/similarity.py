@@ -2,6 +2,8 @@
 """This module contains the wrapper classes for scikit-image library methods"""
 
 import time
+import imagehash
+from PIL import Image
 from functools import wraps
 from collections import defaultdict
 from skimage import io, img_as_float
@@ -37,7 +39,7 @@ def get_similarity_measurement(name):
     return method
 
 
-def register(name=""):
+def register_distance(name=""):
     """Registers the similarity method with given name to MEASUREMENTS dictionary
 
     :param name: name of the method e.g ssim, nrmse, mse, etc.
@@ -46,10 +48,11 @@ def register(name=""):
     def decorator_register(func):
         """Decorator to register similarity measurments"""
         MEASUREMENTS[name] = func
+
     return decorator_register
 
 
-def time_similarity_calculation_and_update_pair(method, timing_method=time.process_time):
+class TimeSimilarityCalculation:
     """Measures the time of the execution of decorated function and
     update the pair parameter pass to that function.
 
@@ -61,18 +64,26 @@ def time_similarity_calculation_and_update_pair(method, timing_method=time.proce
       * perf_counter: https://docs.python.org/3/library/time.html#time.perf_counter
     :return: the result of decorated function
     """
-    @wraps(method)
-    def timed(*args, **kw):
-        ts = timing_method()
-        result = method(*args, **kw)
-        te = timing_method()
-        # Update pair's elapsed time
-        args[0].elapsed = te - ts
-        return result
-    return timed
+
+    def __init__(self, timing_method=time.process_time):
+        self.timing_method = timing_method
+
+    def __call__(self, method):
+        def timed(*args, **kw):
+            ts = self.timing_method()
+            result = method(*args, **kw)
+            te = self.timing_method()
+            # Update pair's elapsed time
+            args[0].elapsed = te - ts
+            return result
+        return timed
 
 
-def __check_files_and_open(pair, same_size_enforce=True):
+def __check_files_and_open_with_PIL(pair, same_size_enforce=True):
+    return __check_files_and_open(pair, same_size_enforce=same_size_enforce, image_read_func=Image.open)
+
+
+def __check_files_and_open(pair, same_size_enforce=True, image_read_func=io.imread):
     """Private function that enforces common checks and returns the file handlers
 
     :param pair: `FilePair` object
@@ -89,12 +100,12 @@ def __check_files_and_open(pair, same_size_enforce=True):
     image2 = None
 
     try:
-        image1 = io.imread(pair.image1)
+        image1 = image_read_func(pair.image1)
     except FileNotFoundError:
         pair.skipped = True
         raise FileError("File Not Found", pair.image1)
     try:
-        image2 = io.imread(pair.image2)
+        image2 = image_read_func(pair.image2)
     except FileNotFoundError:
         pair.skipped = True
         raise FileError("File Not Found", pair.image2)
@@ -107,8 +118,8 @@ def __check_files_and_open(pair, same_size_enforce=True):
     return image1, image2
 
 
-@register(name="ssim")
-@time_similarity_calculation_and_update_pair
+@register_distance(name="ssim")
+@TimeSimilarityCalculation()
 def calculate_ssmi_similarity(pair):
     """Compute the mean structural similarity index between two images.
 
@@ -122,8 +133,8 @@ def calculate_ssmi_similarity(pair):
     pair.similarity = round(1 - similarity, 3)
 
 
-@register(name="nrmse")
-@time_similarity_calculation_and_update_pair
+@register_distance(name="nrmse")
+@TimeSimilarityCalculation()
 def calculate_nrmse_similarity(pair):
     """Compute the normalized root mean-squared error (NRMSE) between two images.
 
@@ -137,8 +148,8 @@ def calculate_nrmse_similarity(pair):
     pair.similarity = round(similarity, 3)
 
 
-@register(name="mse")
-@time_similarity_calculation_and_update_pair
+@register_distance(name="mse")
+@TimeSimilarityCalculation()
 def calculate_mse_similarity(pair):
     """Compute the mean-squared error between two images.
 
@@ -148,3 +159,19 @@ def calculate_mse_similarity(pair):
     image1, image2 = __check_files_and_open(pair)
     similarity = mse(image1, image2)
     pair.similarity = round(similarity / float(image1.shape[0] * image1.shape[1]), 3)
+
+@register_distance(name="dhash")
+@TimeSimilarityCalculation()
+def calculate_dhash_similarity(pair, hash_size=16):
+    """Compute Difference Hash"""
+    image1_handle = None
+    image2_handle = None
+    try:
+        image1_handle, image2_handle = __check_files_and_open_with_PIL(pair)
+        image1 = imagehash.dhash(image1_handle, hash_size=hash_size)
+        image2 = imagehash.dhash(image2_handle, hash_size=hash_size)
+        pair.similarity = float(image1 - image2) / hash_size
+    finally:
+        # close the image files
+        if image1_handle: image1_handle.close()
+        if image2_handle: image2_handle.close()

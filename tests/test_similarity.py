@@ -7,8 +7,27 @@ from image_compare.models import FilePair
 from image_compare.exceptions import FileError, ArgumentError
 from image_compare.similarity import get_similarity_measurement
 
+class TestSimilarity(unittest.TestCase):
+    def setUp(self):
+        """Set up test fixtures, if any."""
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_supported_methods(self):
+        for method_name in ["ssim", "mse", "nrmse", "dhash"]:
+            method = get_similarity_measurement(method_name)
+            assert method is not None
+
+    def test_unsupported_methods(self):
+        with self.assertRaises(ArgumentError):
+            method = get_similarity_measurement(None)
+
+        with self.assertRaises(ArgumentError):
+            method = get_similarity_measurement("")
+
 class TestSSMISimilarity(unittest.TestCase):
-    """Tests for `SSIM` class."""
+    """Tests for `SSIM` method."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -91,7 +110,7 @@ class TestSSMISimilarity(unittest.TestCase):
         assert pair.skipped is False
 
 class TestNRMSESimilarity(unittest.TestCase):
-    """Tests for `NRMSE` class."""
+    """Tests for `NRMSE` method."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -123,7 +142,7 @@ class TestNRMSESimilarity(unittest.TestCase):
         assert pair.skipped is False
 
 class TestMSESimilarity(unittest.TestCase):
-    """Tests for `MSE` class."""
+    """Tests for `MSE` method."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -158,5 +177,38 @@ class TestMSESimilarity(unittest.TestCase):
         pair = FilePair("files/tests/images/0-0-white.png", "files/tests/images/0-0-white.png")
         self.mse(pair)
         assert pair.similarity <= .005, "Same files should return zero"
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+
+class TestDHashSimilarity(unittest.TestCase):
+    """Tests for `DHash` method."""
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        self.dhash = get_similarity_measurement("dhash")
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_dhash_missing_file_first_argument(self):
+        pair = FilePair("no_such_file_exists.png", "files/tests/images/0-0-white.png")
+        with self.assertRaises(FileError):
+            self.dhash(pair)
+        assert pair.skipped is True
+        assert pair.similarity == -1.0
+        assert pair.elapsed == -1.0
+
+    def test_mse_similarity_of_same_file_white(self):
+        pair = FilePair("files/tests/images/0-0-white.png", "files/tests/images/0-0-white.png")
+        self.dhash(pair)
+        assert pair.similarity <= .005, "Same files should return zero"
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+    def test_dhash_similarity_of_white_black_inverse_order(self):
+        pair = FilePair("files/tests/images/small/cat.png", "files/tests/images/small/cat-wm-big.png")
+        self.dhash(pair)
+#        assert pair.similarity >= .995, "Files are the opposite, should be one"
         assert pair.elapsed > 0, "Elapsed should be bigger than zero"
         assert pair.skipped is False
