@@ -15,6 +15,14 @@ from image_compare.exceptions import FileError, ArgumentError
 MEASUREMENTS = defaultdict(None)
 
 
+def get_supported_similarity_methods():
+    """Returns the supported similarity measurement methods as a list
+
+    :return: supported_methods: list
+    """
+    return MEASUREMENTS.keys() if MEASUREMENTS is not None else []
+
+
 def get_similarity_measurement(name):
     """ Returns similarity measurement method
     :param name: name of the method ["ssim", "nrmse", "mse"]
