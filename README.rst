@@ -490,7 +490,7 @@ Simple Test Results
         * In a simplistic manner, to test similarity methods 4 original images compared against each other.
         * Definition of different images heavily depend on application and context. Colors, composition and other aspects
           should be taken into consideration, but such details require a more in-depth research and prototyping, and it is
-          outside scope of this technical challenge.
+          outside the scope of this technical challenge.
         * As the definition of difference is not clear in the technical challenge document, I decided to add multiple
           similarity functions, to deal with the unknown data sets.
     * **Results**
@@ -544,7 +544,6 @@ Simple Test Results
         * In addition to categories, 4 Hash Sizes are used for testing, 8, 16, 32, 64. The hash size only applies
           to AHash, DHash, PHash and WHash methods. During testing hash_size values higher than 16 generated
           quite a bit of noise, so they are not included.
-            * Note: Hash size values do not affect the results of SSIM and NRMSE
         * The cartesian product of category members are used to generate image pairs for the data set.
           Cartesian product ensured existence of every combination in data set, including the identical pairs.
         * The data set is composed of 27 identical and 162 non-identical pairs
@@ -560,10 +559,11 @@ Simple Test Results
             * See the tables below `Internal Category Comparision with HashSize=16`
               and `Internal Category Comparision with HashSize=16 Detection Numbers`
         * It is not feasible to create general statements about similarity methods with such a small data set.
-        Under given circumstances, DHash and PHash seems more better candidates compare to PHash and WHash. As
+        Under given circumstances, DHash and PHash seems better candidates compare to PHash and WHash. As
         future work, fine tuning of PHash and WHash should be studied.
-        * **SSIM** and **NRMSE** both managed to detect all identical files.
-            * SSIM is more resistant to changes and the similarity score closer to zero.
+
+            * **SSIM** and **NRMSE** both managed to detect all identical files.
+            * SSIM is more resistant to changes and generates similarity scores closer to zero.
             * NRMSE is more agressive and sensitive to small changes.
 
 
@@ -617,7 +617,7 @@ After initial evaluation,
     * NRMSE: Good for detecting small changes especially if color is important (hue changes), the only problem is the
       results are not symmetrical, meaning nrmse(image1, image2) is not equal to nrmse(image2, image1), it generates
       pretty close results, but needs further study.
-    * Dhash and PHash are good measurements
+    * DHash and PHash are good measurements
     * WHash: good for detecting similar color schemes
     * Need more study about PHash and AvgHash
 
