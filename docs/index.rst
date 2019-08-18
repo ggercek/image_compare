@@ -1,5 +1,5 @@
 Welcome to Image Compare's documentation!
-======================================
+=========================================
 
 .. toctree::
    :maxdepth: 2
