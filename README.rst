@@ -39,15 +39,15 @@ Here are the important consideration provided by the challenge document;
 
 * How do you know if your code works?
     * The data and method was not available for this assignment, and the description said
-        `"Bjorn is entrusting you to figure out and appropriate scoring algorithm"`.
-        I decided to create a small data set, and test multiple image similarity computation methods and fine tune them.
-        For more information, please see the `Testing Methods` section
+      `"Bjorn is entrusting you to figure out and appropriate scoring algorithm"`.
+      I decided to create a small data set, and test multiple image similarity computation methods and fine tune them.
+      For more information, please see the `Testing Methods` section
 * How are you going to teach Bjorn how to use program?
     * To start with, a one-on-one session would be ideal, but the documentation might be a good start as well.
-        In addition to the documentation, the tool handles exceptions properly, and provides descriptive error messages
-        to help user to solve their technical problems.
+      In addition to the documentation, the tool handles exceptions properly, and provides descriptive error messages
+      to help user to solve their technical problems.
 * Your manager Jeanie is assigning you to a different task and is making Ferris the maintainer of your application.
-    How do you make sure he succeeds?
+  How do you make sure he succeeds?
     * Both high-level and code-level documentation is available for the project.
     * Unit tests provide guidance about how to use API
     * Under `Development` section to entries can be found as step by step guides to add new functionality.
@@ -56,7 +56,9 @@ Here are the important consideration provided by the challenge document;
     * Automated build and checks will also reduce the on boarding costs & learning curve.
 * How are you ensuring Bjorn gets the latest version of your application?
     * Bjorn can install the program by calling following method::
+
         pip install image_compare
+
     * Tool is tested both on Windows and Linux(Ubuntu) and is working without any issues.
     * More information can be found at the `Installation` section
 
@@ -467,18 +469,54 @@ Simple Test Results
 2 test scenarios are implemented and discussed briefly.
 
 1) Original Image Comparision
-
     * **Description**
         * In a simplistic manner, to test similarity methods 4 original images compared against each other.
         * Definition of different images heavily depend on application and context. Colors, composition and other aspects
           should be taken into consideration, but such details require a more in-depth research and prototyping, and it is
           outside scope of this technical challenge.
         * As the definition of difference is not clear in the technical challenge document, I decided to add multiple
-          similarity functions, to deal with the unknown datasets.
+          similarity functions, to deal with the unknown data sets.
     * **Results**
         * Files are under `files/evaluation/`_ :
             compare_originals_results_hashsize_8.csv, compare_originals_results_hashsize_16.csv
-        *
+        * Half of the evaluations are omitted, as they have different sizes. Those rows have a value of
+          -1 for similarity and elapsed time columns
+        * None of the algorithms managed to produce a similarity value of 1. This requires a threshold value
+          calculation based on the application or context requirements.
+            * For example, while using DHash a value of 0.5+ can be interpreted as different but that requires at least
+              one fine tuning session with sample data sets.
+        * In this test, WHash generates lowest scores while comparing nature pictures.
+
+
+.. csv-table:: Internal Category Comparision with HashSize=8 Detection Numbers
+   :header: image1,image2,dhash,avghash,phash,whash,nrmse,ssim
+   :widths: auto
+
+    cat.png,cat.png,0,0,0,0,0,0
+    cityscape.png,cityscape.png,0,0,0,0,0,0
+    nature-1.png,nature-1.png,0,0,0,0,0,0
+    nature-2.png,nature-2.png,0,0,0,0,0,0
+    cat.png,cityscape.png,0.516,0.469,0.469,0.438,0.532,0.4
+    cityscape.png,cat.png,0.516,0.469,0.469,0.438,0.476,0.4
+    nature-1.png,nature-2.png,0.562,0.219,0.531,0.188,0.52,0.38
+    nature-2.png,nature-1.png,0.562,0.219,0.531,0.188,0.45,0.38
+
+
+.. csv-table:: Internal Category Comparision with HashSize=16 Detection Numbers
+   :header: image1,image2,dhash,avghash,phash,whash,nrmse,ssim
+   :widths: auto
+
+    image1,image2,dhash,avghash,phash,whash,nrmse,ssim
+    cat.png,cat.png,0,0,0,0,0,0
+    cityscape.png,cityscape.png,0,0,0,0,0,0
+    nature-1.png,nature-1.png,0,0,0,0,0,0
+    nature-2.png,nature-2.png,0,0,0,0,0,0
+    cat.png,cityscape.png,0.461,0.457,0.555,0.453,0.532,0.4
+    cityscape.png,cat.png,0.461,0.457,0.555,0.453,0.476,0.4
+    nature-1.png,nature-2.png,0.465,0.281,0.492,0.273,0.52,0.38
+    nature-2.png,nature-1.png,0.465,0.281,0.492,0.273,0.45,0.38
+
+
 
 2) Internal Category Comparision
     * **Description**
@@ -489,13 +527,36 @@ Simple Test Results
         * In addition to categories, 4 Hash Sizes are used for testing, 8, 16, 32, 64. The hash size only applies
           to AHash, DHash, PHash and WHash methods. During testing hash_size values higher than 16 generated
           quite a bit of noise, so they are not included.
+            * Note: Hash size values do not affect the results of SSIM and NRMSE
+        * The cartesian product of category members are used to generate image pairs for the data set.
+          Cartesian product ensured existence of every combination in data set, including the identical pairs.
+        * The data set is composed of 27 identical and 162 non-identical pairs
 
     * **Result**
-        * Files are under `files/evaluation/`_ :
-            compare_originals_results_hashsize_8.csv, compare_originals_results_hashsize_16.csv
+        * Evaluation results are stored in `files/evaluation/`_ :
+          compare_originals_results_hashsize_8.csv, compare_originals_results_hashsize_16.csv
+        * HashSize=8 generated False Positives values, due to the lack of details in the final hash values.
+            * See the tables below `Internal Category Comparision with HashSize=8`
+              and `Internal Category Comparision with HashSize=8 Detection Numbers`
+        * HashSize=16 improved results for DHash and PHash to an optimal state within the given data set while
+          PHash and WHash still suffers from False Positives.
+            * See the tables below `Internal Category Comparision with HashSize=16`
+              and `Internal Category Comparision with HashSize=16 Detection Numbers`
+        * It is not feasible to create general statements about similarity methods with such a small data set.
+        Under given circumstances, DHash and PHash seems more better candidates compare to PHash and WHash. As
+        future work, fine tuning of PHash and WHash should be studied.
+        * **SSIM** and **NRMSE** both managed to detect all identical files.
+            * SSIM is more resistant to changes and the similarity score closer to zero.
+            * NRMSE is more agressive and sensitive to small changes.
 
 
-.. _`files/evaluation/`: https://github.com/ggercek/image_compare/tree/master/files/evaluation
+.. csv-table:: Internal Category Comparision with HashSize=8 Detection Numbers
+   :header: "","actual","dhash","avghash","phash","whash","nrmse","ssim"
+   :widths: auto
+
+    "identical",27,37,57,31,67,27,27
+    "non-identical",162,152,132,158,122,162,162
+
 
 .. csv-table:: Internal Category Comparision with HashSize=8
    :header: "","dhash","avghash","phash","whash","nrmse","ssim"
@@ -507,12 +568,6 @@ Simple Test Results
     "median",0.062,0.031,0.094,0.031,0.122,0.036
     "avg",0.074761905,0.06194709,0.133195767,0.072973545,0.141878307,0.054412698
 
-.. csv-table:: Internal Category Comparision with HashSize=8 Correct Detection Numbers
-   :header: "","actual","dhash","avghash","phash","whash","nrmse","ssim"
-   :widths: auto
-
-    "identical",27,37,57,31,67,27,27
-    "non-identical",162,152,132,158,122,162,162
 
 .. csv-table:: Internal Category Comparision with HashSize=16
    :header: "","dhash","avghash","phash","whash","nrmse","ssim"
@@ -524,12 +579,31 @@ Simple Test Results
     "median",0.062,0.035,0.109,0.047,0.122,0.036
     "avg",0.064867725,0.052550265,0.142148148,0.066698413,0.141878307,0.054412698
 
-.. csv-table:: Internal Category Comparision with HashSize=16 Correct Detection Numbers
+
+.. csv-table:: Internal Category Comparision with HashSize=16 Detection Numbers
    :header: "","actual","dhash","avghash","phash","whash","nrmse","ssim"
    :widths: auto
 
     "identical", 27, 27, 45, 27, 37, 27, 27
     "non-identical",162,162,144,162,152,162,162
+
+
+.. _`files/evaluation/`: https://github.com/ggercek/image_compare/tree/master/files/evaluation
+
+
+Discussion
+^^^^^^^^
+
+After initial evaluation,
+
+    * SSIM: Good for detecting big differences, resistant to small changes.
+    * NRMSE: Good for detecting small changes especially if color is important (hue changes), the only problem is the
+      results are not symmetrical, meaning nrmse(image1, image2) is not equal to nrmse(image2, image1), it generates
+      pretty close results, but needs further study.
+    * Dhash and PHash are good measurements
+    * WHash: good for detecting similar color schemes
+    * Need more study about PHash and AvgHash
+
 
 Credits
 -------
