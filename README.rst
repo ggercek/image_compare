@@ -46,9 +46,8 @@ Here are the important consideration provided by the challenge document;
     * To start with, a one-on-one session would be ideal, but the documentation might be a good start as well.
       In addition to the documentation, the tool handles exceptions properly, and provides descriptive error messages
       to help user to solve their technical problems.
-* Your manager Jeanie is assigning you to a different task and is making Ferris the maintainer of your application.
-  How do you make sure he succeeds?
-    * Both high-level and code-level documentation is available for the project.
+* Your manager Jeanie is assigning you to a different task and is making Ferris the maintainer of your application. How do you make sure he succeeds?
+    * Both high level and code level documentation is available for the project.
     * Unit tests provide guidance about how to use API
     * Under `Development` section two entries can be found as step by step guides to add new functionality.
         * Adding a commandline argument
@@ -279,9 +278,7 @@ Assuming you want to add a new commandline argument, namely `log-filename`.
 
 Final version of `image_compare.cli.main` method
 
-.. code-block:: python
-    :linenos:
-    :emphasize-lines: 12,13,16
+.. code-block::
 
     @click.command()
     @click.argument("input_file")
@@ -346,7 +343,7 @@ there is already a python implementation in the project Skimage_
 
     Note: Simplified version showed below for demonstration purposes. You can check the full code at `image_compare/similarity.py`_
 
-..  code-block:: python
+..  code-block::
 
     @register_distance(name="ssim")
     @TimeSimilarityCalculation()
@@ -498,8 +495,7 @@ Simple Test Results
             compare_originals_results_hashsize_8.csv, compare_originals_results_hashsize_16.csv
         * Half of the evaluations are omitted, as they have different sizes. Those rows have a value of
           -1 for similarity and elapsed time columns
-        * None of the algorithms managed to produce a similarity value of 1. This requires a threshold value
-          calculation based on the application or context requirements.
+        * None of the algorithms managed to produce a similarity value of 1. This requires a threshold value calculation based on the application or context requirements.
             * For example, while using DHash a value of 0.5+ can be interpreted as different but that requires at least
               one fine tuning session with sample data sets.
         * In this test, WHash generates lowest scores while comparing nature pictures.
@@ -555,14 +551,12 @@ Simple Test Results
             * See the tables below `Internal Category Comparision with HashSize=8`
               and `Internal Category Comparision with HashSize=8 Detection Numbers`
         * HashSize=16 improved results for DHash and PHash to an optimal state within the given data set while
-          PHash and WHash still suffers from False Positives.
-            * See the tables below `Internal Category Comparision with HashSize=16`
-              and `Internal Category Comparision with HashSize=16 Detection Numbers`
+          PHash and WHash still suffers from False Positives. See the tables below `Internal Category Comparision with HashSize=16` and `Internal Category Comparision with HashSize=16 Detection Numbers`
         * It is not feasible to create general statements about similarity methods with such a small data set.
-        Under given circumstances, DHash and PHash seems better candidates compare to PHash and WHash. As
-        future work, fine tuning of PHash and WHash should be studied.
+          Under given circumstances, DHash and PHash seems better candidates compare to PHash and WHash. As
+          future work, fine tuning of PHash and WHash should be studied.
 
-            * **SSIM** and **NRMSE** both managed to detect all identical files.
+            * SSIM and NRMSE both managed to detect all identical files.
             * SSIM is more resistant to changes and generates similarity scores closer to zero.
             * NRMSE is more agressive and sensitive to small changes.
 
@@ -609,7 +603,7 @@ Simple Test Results
 
 
 Discussion
-^^^^^^^^
+^^^^^^^^^^
 
 After initial evaluation,
 
