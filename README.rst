@@ -86,7 +86,7 @@ How to use
       --overwrite-output              Overwrite the output if already exists
                                       [default: False]
       --quiet                         Suppress console output  [default: False]
-      --distance [ssim|nrmse|mse|dhash|avghash|phash|whash]
+      --distance [ssim|nrmse|dhash|avghash|phash|whash]
                                       Similarity method to compare image pairs
                                       [default: ssim]
       --log-level [DEBUG|INFO|WARNING|ERROR|CRITICAL]
@@ -121,13 +121,12 @@ Features
 * Currently supports only CSV input/output formats
 
 * Supports multiple comparision methods, namely;
-    * SSIM: Structural Similarity Index
-    * MSE: Mean Squared Error
-    * NRMSE: Normalized Root Mean Square Error
-    * DHash: Difference Hashing
-    * AvgHash: Average Hashing
-    * PHash: Perception Hashing
-    * WHash: Wavelet Hashing
+    * SSIM: Structural Similarity Index: https://en.wikipedia.org/wiki/Structural_similarity
+    * NRMSE: Normalized Root Mean Square Error: https://en.wikipedia.org/wiki/Root-mean-square_deviation#Normalized_root-mean-square_deviation
+    * DHash: Difference Hashing: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
+    * AvgHash: Average Hashing: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+    * PHash: Perception Hashing: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+    * WHash: Wavelet Hashing: https://fullstackml.com/2016/07/02/wavelet-image-hash-in-python/
 
 * The tool has following convenient features as well;
     * Can log to file and console
@@ -230,7 +229,7 @@ Here is brief description of each module and their components. Also, you can fin
 * similarity
     Contains the similarity calculation methods as well as the timing and registration functionality.
     Please see the `Adding a new similarity measurement` section for implementation details
-    Supported methods are : SSIM, MSE, NRMSE, DHash, AHash, WHash, PHash.
+    Supported methods are : SSIM, NRMSE, DHash, AHash, WHash, PHash.
     Please see `Method` Section for details.
 * util
     Contains utility functions
@@ -465,7 +464,38 @@ Here are some sample images:
 Simple Test Results
 -------------------
 
-You can find the files under files/evaluation/ folder.
+2 test scenarios are implemented and discussed briefly.
+
+1) Original Image Comparision
+
+    * **Description**
+        * In a simplistic manner, to test similarity methods 4 original images compared against each other.
+        * Definition of different images heavily depend on application and context. Colors, composition and other aspects
+          should be taken into consideration, but such details require a more in-depth research and prototyping, and it is
+          outside scope of this technical challenge.
+        * As the definition of difference is not clear in the technical challenge document, I decided to add multiple
+          similarity functions, to deal with the unknown datasets.
+    * **Results**
+        * Files are under `files/evaluation/`_ :
+            compare_originals_results_hashsize_8.csv, compare_originals_results_hashsize_16.csv
+        *
+
+2) Internal Category Comparision
+    * **Description**
+        * Based on the original images, 4 categories created. Each category contains 1 original image and its variations.
+          The variations are defined in previous section.
+        * The aim of this scenario is to test the methods capability to detect small changes on images.
+        * Applied variations introduce no more than %30 changes to the original images.
+        * In addition to categories, 4 Hash Sizes are used for testing, 8, 16, 32, 64. The hash size only applies
+          to AHash, DHash, PHash and WHash methods. During testing hash_size values higher than 16 generated
+          quite a bit of noise, so they are not included.
+
+    * **Result**
+        * Files are under `files/evaluation/`_ :
+            compare_originals_results_hashsize_8.csv, compare_originals_results_hashsize_16.csv
+
+
+.. _`files/evaluation/`: https://github.com/ggercek/image_compare/tree/master/files/evaluation
 
 .. csv-table:: Internal Category Comparision with HashSize=8
    :header: "","dhash","avghash","phash","whash","nrmse","ssim"
