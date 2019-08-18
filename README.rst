@@ -50,30 +50,43 @@ Here are the important consideration provided by the challenge document;
   How do you make sure he succeeds?
     * Both high-level and code-level documentation is available for the project.
     * Unit tests provide guidance about how to use API
-    * Under `Development` section to entries can be found as step by step guides to add new functionality.
+    * Under `Development` section two entries can be found as step by step guides to add new functionality.
         * Adding a commandline argument
         * Adding a similarity measurement
     * Automated build and checks will also reduce the on boarding costs & learning curve.
 * How are you ensuring Bjorn gets the latest version of your application?
-    * Bjorn can install the program by calling following method::
+    * Bjorn can install the program by using pip following method::
 
         pip install image_compare
 
     * Tool is tested both on Windows and Linux(Ubuntu) and is working without any issues.
-    * More information can be found at the `Installation` section
+    * More information can be found at the `Installation`_ section
+
+.. _`Installation`: https://image-compare.readthedocs.io/en/latest/installation.html
 
 Approach
 ---------------------------
 
-TODO: Iterate
+I used following steps while implementing this tool
 
-- Looked for image similarity methods
-- Looked for project structure best practices
-    - inspect popular python projects like Requests, Httpie, etc.
-- Used CookieCutterPython template to initialize the project
-- Setup Travis CI
-- test code, and improve
-- decorator
+* Looked for image similarity methods -
+    * Initially came across with SSIM and MSE. They seem popular especially in research papers but I wasn't sure about the application specific data set.
+    * So kept looking and found Distance Hash and Perception Hash methods and the imagehash library
+    * Used all of these methods to have flexibility while dealing with new data sets.
+* Looked for best practices and inspect popular python projects like Requests, Httpie, etc.
+    * Setup the plan for project structure and CI flow
+    * Used CookieCutterPython template to initialize the project
+    * Setup Travis CI
+* Aimed for an extendable design as the requirements can be changes over time, and the maintaning
+    * Followed an iterative development model: Test -> Code -> Refactor, you can check the git history.
+    * Split the code base into multiple modules based on simple responsibilities, to increase readability.
+* After implementing initial similarity methods, decided to implement decorators.
+    * Although they increase complexity at first, with good documentation and samples, they hide the details while
+      improving expressiveness of the code.
+    * Implemented decorators for timing and registration of similarity methods
+    * Created extra documentation for adding a new similarity method to demonstrate how to use those decorators.
+* Implemented exception handling and logging with descriptive messages for users and developers.
+* Implemented documentation
 
 
 How to use
@@ -193,6 +206,11 @@ Due to technical problems the Coveralls.io integration is not working properly, 
 `coverage_html_report`_ folder. Also, you can click here_ to see the report online.
 
 (Will update this section, when solving the integration issue)
+
+To generate test coverage on your local installation run::
+
+    coverage run setup.py test
+    coverage html
 
 .. _`coverage_html_report`: https://github.com/ggercek/image_compare/tree/master/coverage_html_report
 .. _`here`: http://htmlpreview.github.io/?https://raw.githubusercontent.com/ggercek/image_compare/master/coverage_html_report/index.html
@@ -358,7 +376,6 @@ there is already a python implementation in the project Skimage_
 .. _FilePair: https://github.com/ggercek/image_compare/blob/master/image_compare/models.py#L4
 .. _`image_compare/similarity.py`: https://github.com/ggercek/image_compare/blob/master/image_compare/similarity.py
 .. _`tests/test_similarity.py`: https://github.com/ggercek/image_compare/blob/master/tests/test_similarity.py
-
 
 PyPI Release Checklist
 ^^^^^^^^^^^^^^^^^^^^^^
