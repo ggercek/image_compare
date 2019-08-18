@@ -162,7 +162,7 @@ def calculate_mse_similarity(pair):
 
 @TimeSimilarityCalculation()
 def __calculate_imagehash_based_similarity(pair, hash_func, hash_size=16):
-    """Compute Difference Hash"""
+    """Compute given hash_func over pair object's images and update pair object's similarity"""
     image1_handle = None
     image2_handle = None
     try:
@@ -180,19 +180,23 @@ def __calculate_imagehash_based_similarity(pair, hash_func, hash_size=16):
 
 @register_distance(name="dhash")
 def calculate_dhash_similarity(pair, hash_size=16):
+    """Compute Difference Hash"""
     __calculate_imagehash_based_similarity(pair, imagehash.dhash, hash_size=hash_size)
 
 
 @register_distance(name="avghash")
 def calculate_avghash_similarity(pair, hash_size=16):
+    """Compute Average Hash"""
     __calculate_imagehash_based_similarity(pair, imagehash.average_hash, hash_size=hash_size)
 
 
 @register_distance(name="phash")
 def calculate_phash_similarity(pair, hash_size=16):
+    """Compute Perception Hash"""
     __calculate_imagehash_based_similarity(pair, imagehash.phash, hash_size=hash_size)
 
 
 @register_distance(name="whash")
 def calculate_whash_similarity(pair, hash_size=16):
+    """Compute Wavelet Hash"""
     __calculate_imagehash_based_similarity(pair, imagehash.whash, hash_size=hash_size)

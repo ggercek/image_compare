@@ -17,10 +17,6 @@ Image Compare
         :target: https://pyup.io/repos/github/ggercek/image_compare/
         :alt: Updates
 
-.. image:: https://coveralls.io/repos/github/ggercek/image_compare/badge.svg?branch=master
-        :target: https://coveralls.io/github/ggercek/image_compare?branch=master
-
-
 CLI tool to compare image similarities.
 
 
@@ -40,30 +36,54 @@ How to use
 
     Options:
       --overwrite-output              Overwrite the output if already exists
-      --quiet                         Suppress console output
+                                      [default: False]
+      --quiet                         Suppress console output  [default: False]
       --distance [ssim|nrmse|mse|dhash|avghash|phash|whash]
                                       Similarity method to compare image pairs
+                                      [default: ssim]
       --log-level [DEBUG|INFO|WARNING|ERROR|CRITICAL]
                                       Log level to control the output volume
+                                      [default: INFO]
+      --log-filename TEXT             Log file path  [default: image_compare.log]
       --help                          Show this message and exit.
 
 
-    image_compare --distance=ssim --overwrite-output files/product-cat-photos.csv files/product-cat-photos.csv
+Sample Commands::
+
+    # use default options
+    image_compare files/product-cat-photos.csv files/product-cat-photos.csv
+
+    # use dhash
+    image_compare --distance=dhash files/product-cat-photos.csv files/product-cat-photos.csv
+
+    # use whash and overwrite output
+    image_compare --distance=whash --overwrite-output files/product-cat-photos.csv files/product-cat-photos.csv
+
+    # use ssim and use my_log_file.log as logging, and no console output
+    image_compare --distance=ssim --log-filename="my_log_file.log" --quiet \
+        files/product-cat-photos.csv files/product-cat-photos.csv
 
 Features
 --------
 
-* Currently supports only CSV input output formats
+* Currently supports only CSV input/output formats
 
-* Supports multiple comparision method, namely;
-    * SSIM:
-    * MSE:
-    * NRMSE:
-    * DHash:
-    * AHash:
-    * PHash:
-    * WHash:
+* Supports multiple comparision methods, namely;
+    * SSIM: Structural Similarity Index
+    * MSE: Mean Squared Error
+    * NRMSE: Normalized Root Mean Square Error
+    * DHash: Difference Hashing
+    * AvgHash: Average Hashing
+    * PHash: Perception Hashing
+    * WHash: Wavelet Hashing
 
+* The tool has following convenient features as well;
+    * Can log to file and console
+    * Can suppress console output, useful for automation
+    * Provides summary at the end of execution
+    * Descriptive error handling: in case of an error tool provides feedback to user about possible solution
+    * If an error occurs during the output file creation, the calculated distances will be written to log file.
+    *
 
 **Sample Files**
 
@@ -87,7 +107,6 @@ Features
    "files/images/cat.png","files/images/cat-wm-big.png",0.014,1.375
    "files/images/cat.png","files/images/cat-wm-small.png",0.005,1.390625
 
-* TODO
 
 Technologies
 ------------
@@ -109,10 +128,22 @@ Following packages used for development and testing
 * watchdog==0.9.0
 * flake8==3.7.8
 * tox==3.13.2
-* coverage==4.5.4
-* Sphinx==2.1.2
+* coverage==4.5.4 -> Test Coverage
+* Sphinx==2.1.2 -> Automated documentation generation
 * twine==1.13.0
-* bandit==1.6.2
+* bandit==1.6.2 -> Static security analyzer
+
+
+Test Coverage
+-------------
+
+Due to technical problems the Coveralls.io integration is not working properly, so you can find the coverage results
+in this section. They are stored under coverage_html_report folder.
+
+(Will update this section, when solving the integration issue)
+
+.. raw:: html
+    :file: coverage_html_report/index.html
 
 Development
 -----------
