@@ -27,9 +27,42 @@ CLI tool to compare image similarities.
 * Free software: GNU General Public License v3
 * Documentation: https://image-compare.readthedocs.io.
 
+.. contents::
+
+
+How to use
+----------
+.. code-block::
+
+    Usage: image_compare [OPTIONS] INPUT_FILE OUTPUT_FILE
+
+      A tool to compare given image pairs
+
+    Options:
+      --overwrite-output              Overwrite the output if already exists
+      --quiet                         Suppress console output
+      --distance [ssim|nrmse|mse|dhash|avghash|phash|whash]
+                                      Similarity method to compare image pairs
+      --log-level [DEBUG|INFO|WARNING|ERROR|CRITICAL]
+                                      Log level to control the output volume
+      --help                          Show this message and exit.
+
+
+    image_compare --distance=ssim --overwrite-output files/product-cat-photos.csv files/product-cat-photos.csv
+
 Features
 --------
 
+* Currently supports only CSV input output formats
+
+* Supports multiple comparision method, namely;
+    * SSIM:
+    * MSE:
+    * NRMSE:
+    * DHash:
+    * AHash:
+    * PHash:
+    * WHash:
 
 
 **Sample Files**
@@ -66,6 +99,7 @@ Following packages used for development and testing
 * Click==6.0
 * scikit-image==0.15.0
 * scipy==1.3.1
+* imagehash==0.4
 
 **Testing & Building**
 
@@ -83,17 +117,101 @@ Following packages used for development and testing
 Development
 -----------
 
-**Sample Implementation Details**
+Implementation Details
+^^^^^^^^^^^^^^^^^^^^^^
 
-Adding a new similarity measurement
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Modules**
 
-Another popular similarity measurement algorithm is dHash_ and there is already a python implementation called ImageHash_
+Here is brief description of each module and their components. Also, you can find more info at `Module Index`_
+
+* cli
+    contains Command Line Interface(CLI) definition and help text.
+    This module parses user's input and creates a `models.Config` object to pass it
+    to `image_compare.main(config)` method
+    This module contains the entry point of the project.
+* exception
+    Contains following custom exception classes, for error handling.
+    * ICError(Exception): Base exception class
+    * FileError(ICError): Represents file related errors
+    * ArgumentError(ICError): Represents argument related logic errors
+* file_handlers
+    Contains the classes for parsing and writing files as well as
+    a factory class to object creation based on the input/output file extension.
+    This module currently supports only CSV files
+    * FileHandlerFactory:
+    * CSVInputHandler: Deals with the CSV file parsing and creating FilePair objects
+    * CSVOutputHandler: Writes given FilePair objects in to a CSV file.
+* image_compare
+    This module deals with logging, exception handling and program flow.
+* models
+    Contains `FilePair` and `Config` data objects.
+* similarity
+    Contains the similarity calculation methods as well as the timing and registration functionality.
+    Please see te `Adding a new similarity measurment` section for implementation details
+    Supported methods are : SSIM, MSE, NRMSE, DHash, AHash, WHash, PHash.
+    Please see `Method` Section for details.
+* util
+    Contains utility functions
+
+.. _`Module Index`: https://image-compare.readthedocs.io/en/latest/py-modindex.html
+
+Adding a commandline argument
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Assuming you want to add a new commandline argument, namely `log-filename`.
+
+1) Update your CLI definition in `image_compare.cli` module. Decorate `image_compare.cli.main()`
+
+    @click.option("--log-filename", default="image_compare.log",help="Log file path")
+
+2) You must add new `log_filename` argument to main() method, updated main method signature should look like this
+
+    def main(input_file, output_file, overwrite_output, quiet, distance, log_level, log_filename):
+
+3) Pass the new argument to Config object
+
+        config = Config(input_file, output_file, overwrite_output, quiet, distance, log_level, log_filename)
+
+4) Update the image_compare.models.Config class and update test for initial values
+
+5) Now you can use `config.log_filename` in `image_compare.main()` method
+
+Final version of `image_compare.cli.main` method
+
+.. code-block:: python
+    :linenos:
+    :emphasize-lines: 12,13,16
+
+    @click.command()
+    @click.argument("input_file")
+    @click.argument("output_file")
+    @click.option("--overwrite-output", is_flag=True, default=False,
+                  help="Overwrite the output if already exists")
+    @click.option("--quiet", is_flag=True, default=False,
+                  help="Suppress console output")
+    @click.option("--distance", type=click.Choice(get_supported_similarity_methods()), default="ssim",
+                  help="Similarity method to compare image pairs")
+    @click.option("--log-level", type=click.Choice(image_compare.log_levels.keys()), default="INFO",
+                  help="Log level to control the output volume")
+    @click.option("--log-filename", default="image_compare.log",
+                  help="Log file path")
+    def main(input_file, output_file, overwrite_output, quiet, distance, log_level, log_filename):
+        """A tool to compare given image pairs"""
+        config = Config(input_file, output_file, overwrite_output, quiet, distance, log_level, log_filename)
+        return image_compare.main(config)
+
+
+
+Adding a similarity measurement
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Assuming you want to add a new similarity measurement algorithm called `Structural Similarity Index Measure`_ and
+there is already a python implementation in the project Skimage_
 
 1) Update our requirements
     Add a new entry to requirements_dev.txt file
 
-    `imagehash==4.0`
+    `skimage==0.15.0`
 
 2) Download dependencies
 
@@ -101,17 +219,17 @@ Another popular similarity measurement algorithm is dHash_ and there is already 
 
     or
 
-    `python -m pip install imagehash==4.0`
+    `python -m pip install skimage==0.15.0`
 
 3) Open `image_compare/similarity.py` file and add our new method
     There are no constraints on the method name but the argument must be a FilePair_ object
 
-    After implementing the body in `image_compare.similarity` module, you should use `@register(name="dhash")`
-    and `@time_similarity_calculation_and_update_pair` decorators.
+    After implementing the body in `image_compare.similarity` module, you should use `@register(name="ssim")`
+    and `@TimeSimilarityCalculation` decorators.
 
     **@register_distance(name)**
         decorator registers your new function as a `similarity_measurement` method and this method will be available
-        with `name`'s value e.g.`--distance=dhash` to CLI users without any more code update.
+        with `name`'s value e.g.`--distance=ssim` to CLI users without any more code update.
 
     **@TimeSimilarityCalculation(timing_method=time.perf_counter)**
         decorator times the execution of the method and update the current image pairs `pair.elapsed` member.
@@ -129,26 +247,30 @@ Another popular similarity measurement algorithm is dHash_ and there is already 
 
 ..  code-block:: python
 
-    @register_distance(name="dhash")
-    @TimeSimilarityCalculation(timing_method=time.perf_counter) # parameter is optional
-    def calculate_dhash_similarity(pair):
-        # ... omitted parts
-        image1_handle, image2_handle = __check_files_and_open_with_PIL(pair)
-        image1 = imagehash.dhash(image1_handle, hash_size=hash_size)
-        image2 = imagehash.dhash(image2_handle, hash_size=hash_size)
-        pair.similarity = float(image1 - image2) / hash_size
-        # ... omitted parts
+    @register_distance(name="ssim")
+    @TimeSimilarityCalculation()
+    def calculate_ssmi_similarity(pair):
+        """Compute the mean structural similarity index between two images.
+
+        :param pair: image pair to compare
+        :return:
+        """
+        image1, image2 = __check_files_and_open(pair)
+        img1f = img_as_float(image1)
+        img2f = img_as_float(image2)
+        similarity = ssim(img1f, img2f, multichannel=True)
+        pair.similarity = round(1 - similarity, 3)
 
 4) Add some tests to `tests/test_similarity.py`_ and run them with `python setup.py test`
 
 5) Install the updated version with `python setup.py install` and you can use your new method with;
 
-    `image_compare --distance=dhash input.csv output.csv`
+    `image_compare --distance=ssim input.csv output.csv`
 
 5) That is it. Your new function is ready to use! Please see section about releasing a new version section, if you want to publish your code changes to PyPI.
 
-.. _dHash: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-.. _ImageHash: https://pypi.org/project/ImageHash/
+.. _`Structural Similarity Index Measure`:
+.. _Skimage:
 .. _FilePair: https://github.com/ggercek/image_compare/blob/master/image_compare/models.py#L4
 .. _here: https://github.com/ggercek/image_compare/blob/master/image_compare/similarity.py
 .. _`tests/test_similarity.py`: https://github.com/ggercek/image_compare/blob/master/tests/test_similarity.py
