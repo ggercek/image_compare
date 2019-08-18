@@ -2,6 +2,7 @@
 
 """Main module."""
 
+import time
 import logging
 from image_compare.similarity import get_similarity_measurement
 from image_compare.exceptions import ICError, FileError, ArgumentError
@@ -24,11 +25,14 @@ class ExitCodes:
 
 
 def __real_main(config):
+    time_start = time.process_time()
+    time_end = 0
     try:
         input_handler = None
         output_handler = None
         similarity = None
         pairs = None
+        num_of_pairs = 0
         headers = ["image1", "image2", "similarity", "elapsed"]
 
         # Init file handlers
@@ -81,6 +85,18 @@ def __real_main(config):
             logging.error("To keep the results, pairs will be dumped here")
             logging.error('\n'+'\n'.join([str(p) for p in pairs]))
             return ExitCodes.FILE_ERROR
+
+        # Generate a execution summary
+        time_end = time.process_time()
+        num_of_skipped_pairs = sum([pair for pair in pairs if pair.skipped])
+
+        logging.info(f"Summary: "
+                     f"\n\tInput: {config.input_file}"
+                     f"\n\tOutput: {config.output_file}"
+                     f"\n\tProcessed: {num_of_pairs}"
+                     f"\n\tSkipped: {num_of_skipped_pairs}"
+                     f"\n\tUsed Distance:{config.distance}"
+                     f"\n\tTotal time:{time_end - time_start} seconds")
 
     except Exception as e:
         # Catch all statement in case we missed something
