@@ -25,6 +25,54 @@ CLI tool to compare image similarities.
 
 .. contents::
 
+This tool is developed for a technical challenge provided by Loblaw Digital.
+
+The aim of the challenge is to develop a tool to automate an image similarity comparison process.
+The tool consumes a csv input file represents image pairs on each row, and produces a csv output file
+that contains image pair as well as elapsed time and similarity score in range of [0, 1].
+0 means identical, 1 means different
+
+Important Considerations and Answers
+------------------------------------
+
+Here are the important consideration provided by the challenge document;
+
+* How do you know if your code works?
+    * The data and method was not available for this assignment, and the description said
+        `"Bjorn is entrusting you to figure out and appropriate scoring algorithm"`.
+        I decided to create a small data set, and test multiple image similarity computation methods and fine tune them.
+        For more information, please see the `Testing Methods` section
+* How are you going to teach Bjorn how to use program?
+    * To start with, a one-on-one session would be ideal, but the documentation might be a good start as well.
+        In addition to documentation, the tool handles exceptions properly, and provides descriptive error messages
+        to help user to solve their technical problems.
+* Your manager Jeanie is assigning you to a different task and is making Ferris the maintainer of your application.
+    How do you make sure he succeeds?
+    * Both high-level and code-level documentation is available for the project.
+    * Unit tests provide guidance about how to use API
+    * Under `Development` section to entries can be found as step by step guides to add new functionality.
+        * Adding a commandline argument
+        * Adding a similarity measurement
+    * Automated build and checks will also reduce the on boarding costs & learning curve.
+* How are you ensuring Bjorn gets the latest version of your application?
+    * Bjorn can install the program by calling following method::
+        pip install image_compare
+    * Tool is tested both on Windows and Linux(Ubuntu) and is working without any issues.
+    * More information can be found at the `Installation` section
+
+Approach
+---------------------------
+
+TODO: Iterate
+
+- Looked for image similarity methods
+- Looked for project structure best practices
+    - inspect popular python projects like Requests, Httpie, etc.
+- Used CookieCutterPython template to initialize the project
+- Setup Travis CI
+- test code, and improve
+- decorator
+
 
 How to use
 ----------
@@ -63,6 +111,10 @@ Sample Commands::
     image_compare --distance=ssim --log-filename="my_log_file.log" --quiet \
         files/product-cat-photos.csv files/product-cat-photos.csv
 
+If you want to learn how to use image_compare programmatically please see the `Usage Section`_
+
+.. _`Usage Section`: https://image-compare.readthedocs.io/en/latest/usage.html
+
 Features
 --------
 
@@ -83,7 +135,6 @@ Features
     * Provides summary at the end of execution
     * Descriptive error handling: in case of an error tool provides feedback to user about possible solution
     * If an error occurs during the output file creation, the calculated distances will be written to log file.
-    *
 
 **Sample Files**
 
