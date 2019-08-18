@@ -28,7 +28,7 @@ CLI tool to compare image similarities.
 This tool is developed for a technical challenge provided by Loblaw Digital.
 
 The aim of the challenge is to develop a tool to automate an image similarity comparison process.
-The tool consumes a csv input file represents image pairs on each row, and produces a csv output file
+The tool consumes a csv input file which represents image pairs on each row, and produces a csv output file
 that contains image pair as well as elapsed time and similarity score in range of [0, 1].
 0 means identical, 1 means different
 
@@ -44,7 +44,7 @@ Here are the important consideration provided by the challenge document;
         For more information, please see the `Testing Methods` section
 * How are you going to teach Bjorn how to use program?
     * To start with, a one-on-one session would be ideal, but the documentation might be a good start as well.
-        In addition to documentation, the tool handles exceptions properly, and provides descriptive error messages
+        In addition to the documentation, the tool handles exceptions properly, and provides descriptive error messages
         to help user to solve their technical problems.
 * Your manager Jeanie is assigning you to a different task and is making Ferris the maintainer of your application.
     How do you make sure he succeeds?
@@ -188,13 +188,13 @@ Following packages used for development and testing
 Test Coverage
 -------------
 
-Due to technical problems the Coveralls.io integration is not working properly, so you can find the coverage results
-in this section. They are stored under coverage_html_report folder.
+Due to technical problems the Coveralls.io integration is not working properly, but the html reports are stored under
+`coverage_html_report`_ folder. Also, you can click here_ to see the report online.
 
 (Will update this section, when solving the integration issue)
 
-.. raw:: html
-    :file: coverage_html_report/index.html
+.. _`coverage_html_report`: https://github.com/ggercek/image_compare/tree/master/coverage_html_report
+.. _`here`: http://htmlpreview.github.io/?https://raw.githubusercontent.com/ggercek/image_compare/master/coverage_html_report/index.html
 
 Development
 -----------
@@ -207,9 +207,9 @@ Implementation Details
 Here is brief description of each module and their components. Also, you can find more info at `Module Index`_
 
 * cli
-    contains Command Line Interface(CLI) definition and help text.
+    Contains Command Line Interface(CLI) definition and help text.
     This module parses user's input and creates a `models.Config` object to pass it
-    to `image_compare.main(config)` method
+    to `image_compare.main(config)` method.
     This module contains the entry point of the project.
 * exception
     Contains following custom exception classes, for error handling.
@@ -229,7 +229,7 @@ Here is brief description of each module and their components. Also, you can fin
     Contains `FilePair` and `Config` data objects.
 * similarity
     Contains the similarity calculation methods as well as the timing and registration functionality.
-    Please see te `Adding a new similarity measurment` section for implementation details
+    Please see the `Adding a new similarity measurement` section for implementation details
     Supported methods are : SSIM, MSE, NRMSE, DHash, AHash, WHash, PHash.
     Please see `Method` Section for details.
 * util
@@ -323,9 +323,9 @@ there is already a python implementation in the project Skimage_
             * process_time: https://docs.python.org/3/library/time.html#time.process_time
             * perf_counter: https://docs.python.org/3/library/time.html#time.perf_counter
 
-    After the completing calculation you must update `pair.similarity`.
+    After completing calculation you must update `pair.similarity`.
 
-    Note: Simplified version showed below for demonstration purposes. You can check the full code here_
+    Note: Simplified version showed below for demonstration purposes. You can check the full code at `image_compare/similarity.py`_
 
 ..  code-block:: python
 
@@ -349,12 +349,13 @@ there is already a python implementation in the project Skimage_
 
     `image_compare --distance=ssim input.csv output.csv`
 
-5) That is it. Your new function is ready to use! Please see section about releasing a new version section, if you want to publish your code changes to PyPI.
+5) That is it. Your new function is ready to use! Please see section about releasing a new version section,
+    if you want to publish your code changes to PyPI.
 
 .. _`Structural Similarity Index Measure`:
 .. _Skimage:
 .. _FilePair: https://github.com/ggercek/image_compare/blob/master/image_compare/models.py#L4
-.. _here: https://github.com/ggercek/image_compare/blob/master/image_compare/similarity.py
+.. _`image_compare/similarity.py`: https://github.com/ggercek/image_compare/blob/master/image_compare/similarity.py
 .. _`tests/test_similarity.py`: https://github.com/ggercek/image_compare/blob/master/tests/test_similarity.py
 
 
@@ -423,8 +424,8 @@ Image names contain the manipulation applied on it. Details
 
 * **Box**: Added a solid box 1/16 of the image size
 * **Hue**: Maxed out Hue slider on Photoshop
-* **CloneStamp**: Mnipulated images with Clone Stamp tool in Photoshop
-* **WM-size**: Watermarking image in two sizes as big and small
+* **CloneStamp**: Manipulated images with Clone Stamp tool in Photoshop
+* **WM-size**: Watermarked image in two sizes as big and small
 * **Crop-Left|Right** Cropped %10 of the original image from Left or Right
 
 Here are some sample images:
@@ -453,13 +454,52 @@ Here are some sample images:
         :alt: cat-wm-big.png: Cat Original
         :width: 200 px
 
-
 **Credits for images**
 
 * Toronto Cityscape Photo by Alex Shutin on Unsplash
 * Cat Photo by Yerlin Matu on Unsplash
 * Nature1 Photo by eberhard grossgasteiger on Unsplash
 * Nature2 Photo by Daniel Roe on Unsplash
+
+
+Simple Test Results
+-------------------
+
+You can find the files under files/evaluation/ folder.
+
+.. csv-table:: Internal Category Comparision with HashSize=8
+   :header: "","dhash","avghash","phash","whash","nrmse","ssim"
+   :widths: auto
+
+    "max",0.281,0.359,0.438,0.375,0.396,0.168
+    "min",0,0,0,0,0,0
+    "stddev",0.070443203,0.087345191,0.119002107,0.099554587,0.106300916,0.049045266
+    "median",0.062,0.031,0.094,0.031,0.122,0.036
+    "avg",0.074761905,0.06194709,0.133195767,0.072973545,0.141878307,0.054412698
+
+.. csv-table:: Internal Category Comparision with HashSize=8 Correct Detection Numbers
+   :header: "","actual","dhash","avghash","phash","whash","nrmse","ssim"
+   :widths: auto
+
+    "identical",27,37,57,31,67,27,27
+    "non-identical",162,152,132,158,122,162,162
+
+.. csv-table:: Internal Category Comparision with HashSize=16
+   :header: "","dhash","avghash","phash","whash","nrmse","ssim"
+   :widths: auto
+
+    "max",0.23,0.258,0.453,0.273,0.396,0.168
+    "min",0,0,0,0,0,0
+    "stddev",0.048071689,0.062382791,0.11597915,0.068472441,0.106300916,0.049045266
+    "median",0.062,0.035,0.109,0.047,0.122,0.036
+    "avg",0.064867725,0.052550265,0.142148148,0.066698413,0.141878307,0.054412698
+
+.. csv-table:: Internal Category Comparision with HashSize=16 Correct Detection Numbers
+   :header: "","actual","dhash","avghash","phash","whash","nrmse","ssim"
+   :widths: auto
+
+    "identical", 27, 27, 45, 27, 37, 27, 27
+    "non-identical",162,162,144,162,152,162,162
 
 Credits
 -------
