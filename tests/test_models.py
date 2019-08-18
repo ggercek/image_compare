@@ -34,3 +34,4 @@ class TestModels(unittest.TestCase):
         assert config.quiet is False
         assert config.distance == "ssim"
         assert config.log_level == "INFO"
+        assert config.log_filename == "image_compare.log"

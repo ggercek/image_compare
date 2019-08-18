@@ -80,7 +80,7 @@ def __real_main(config):
             logging.error(f"Error occured while writing to output file {fe}")
             logging.error("To keep the results, pairs will be dumped here")
             logging.error('\n'+'\n'.join([str(p) for p in pairs]))
-            return ExitCodes.ARGUMENT_ERROR
+            return ExitCodes.FILE_ERROR
 
     except Exception as e:
         # Catch all statement in case we missed something
@@ -93,8 +93,8 @@ def __real_main(config):
 def main(config):
     """Main function"""
 
-    logging.basicConfig(filename='image_compare.log', filemode='a', level=log_levels[config.log_level],
-                        format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    logging.basicConfig(filename=config.log_filename, filemode='a', level=log_levels[config.log_level],
+                        format="%(asctime)s - %(levelname)s - %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
 
     if not config.quiet:
         console = logging.StreamHandler()

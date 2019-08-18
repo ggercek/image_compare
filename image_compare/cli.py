@@ -19,9 +19,11 @@ from image_compare.similarity import get_supported_similarity_methods
               help="Similarity method to compare image pairs")
 @click.option("--log-level", type=click.Choice(image_compare.log_levels.keys()), default="INFO",
               help="Log level to control the output volume")
-def main(input_file, output_file, overwrite_output, quiet, distance, log_level):
-    """Console script for image_compare."""
-    config = Config(input_file, output_file, overwrite_output, quiet, distance, log_level)
+@click.option("--log-filename", default="image_compare.log",
+              help="Log file path")
+def main(input_file, output_file, overwrite_output, quiet, distance, log_level, log_filename):
+    """A tool to compare given image pairs"""
+    config = Config(input_file, output_file, overwrite_output, quiet, distance, log_level, log_filename)
     return image_compare.main(config)
 
 
