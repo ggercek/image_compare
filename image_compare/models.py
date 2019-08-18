@@ -16,7 +16,7 @@ class FilePair:
 
 
 class Config:
-    def __init__(self, input_file, output_file, overwrite_output=False, quiet=False, distance="ssim",
+    def __init__(self, input_file, output_file, overwrite_output=False, quiet=False, distance="dhash",
                  log_level="INFO", log_filename="image_compare.log"):
         self.input_file = input_file
         self.output_file = output_file

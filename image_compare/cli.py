@@ -15,7 +15,7 @@ from image_compare.similarity import get_supported_similarity_methods
               help="Overwrite the output if already exists")
 @click.option("--quiet", is_flag=True, default=False, show_default=True,
               help="Suppress console output")
-@click.option("--distance", type=click.Choice(get_supported_similarity_methods()), default="ssim", show_default=True,
+@click.option("--distance", type=click.Choice(get_supported_similarity_methods()), default="dhash", show_default=True,
               help="Similarity method to compare image pairs")
 @click.option("--log-level", type=click.Choice(image_compare.log_levels.keys()), default="INFO", show_default=True,
               help="Log level to control the output volume")
@@ -40,7 +40,8 @@ def main(input_file, output_file, overwrite_output, quiet, distance, log_level, 
 
         # use ssim and use my_log_file.log as logging, and no console output
 
-        image_compare --distance=ssim --log-filename="my_log_file.log" --quiet files/product-cat-photos.csv files/product-cat-photos.csv
+        image_compare --distance=ssim --log-filename="my_log_file.log" --quiet \
+            files/product-cat-photos.csv files/product-cat-photos.csv
 
     """
     config = Config(input_file, output_file, overwrite_output, quiet, distance, log_level, log_filename)
