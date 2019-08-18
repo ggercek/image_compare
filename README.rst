@@ -276,6 +276,59 @@ there is already a python implementation in the project Skimage_
 .. _`tests/test_similarity.py`: https://github.com/ggercek/image_compare/blob/master/tests/test_similarity.py
 
 
+PyPI Release Checklist
+^^^^^^^^^^^^^^^^^^^^^^
+
+(Forked from: `Audreyr's PyPI Checklist`_)
+
+- [ ] Update HISTORY.rst
+- [ ] Commit the changes:
+
+::
+
+    git add HISTORY.rst
+    git commit -m "Changelog for upcoming release 0.1.1."
+
+- [ ] Update version number (can also be minor or major)
+
+::
+
+    Bump2version patch
+
+- [ ] Install the package again for local development, but with the new version number:
+
+::
+
+    python setup.py develop
+
+- [ ] Run the tests:
+
+::
+
+    tox
+
+- [ ] Release on PyPI by uploading both sdist and wheel:
+
+::
+
+    python setup.py sdist upload
+    python setup.py bdist_wheel upload
+
+- [ ] Test that it pip installs:
+
+::
+
+    mktmpenv
+    pip install my_project
+    <try out my_project>
+    deactivate
+
+- [ ] Push: `git push --follow-tags`
+- [ ] Check the PyPI listing page to make sure that the README, release notes, and roadmap display properly. If not, copy and paste the RestructuredText into http://rst.ninjs.org/ to find out what broke the formatting.
+
+.. _`Audreyr's PyPI Checklist`: https://gist.githubusercontent.com/audreyr/5990987/raw/685db574ea2a1a0350dceae53c1fb2b30c16aa94/pypi-release-checklist.md
+
+
 Test Data
 ---------
 
