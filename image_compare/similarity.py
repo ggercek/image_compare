@@ -8,7 +8,6 @@ from collections import defaultdict
 from skimage import io, img_as_float
 from skimage.measure import compare_ssim as ssim
 from skimage.measure import compare_nrmse as nrmse
-from skimage.measure import compare_mse as mse
 
 from image_compare.exceptions import FileError, ArgumentError
 
@@ -26,7 +25,7 @@ def get_supported_similarity_methods():
 
 def get_similarity_measurement(name):
     """ Returns similarity measurement method
-    :param name: name of the method ["ssim", "nrmse", "mse"]
+    :param name: name of the method ["ssim", "nrmse"]
     :return: similarity method if the name is valid
     :raises:
         ArgumentError: if name is a not a valid implemented method
@@ -41,7 +40,7 @@ def get_similarity_measurement(name):
 def register_distance(name=""):
     """Registers the similarity method with given name to MEASUREMENTS dictionary
 
-    :param name: name of the method e.g ssim, nrmse, mse, etc.
+    :param name: name of the method e.g ssim, nrmse, etc.
     :return: decorated method
     """
     def decorator_register(func):
@@ -147,19 +146,6 @@ def calculate_nrmse_similarity(pair):
     pair.similarity = round(similarity, 3)
 
 
-@register_distance(name="mse")
-@TimeSimilarityCalculation()
-def calculate_mse_similarity(pair):
-    """Compute the mean-squared error between two images.
-
-    :param pair: image pair to compare
-    :return:
-    """
-    image1, image2 = __check_files_and_open(pair)
-    similarity = mse(image1, image2)
-    pair.similarity = round(similarity / float(image1.shape[0] * image1.shape[1]), 3)
-
-
 @TimeSimilarityCalculation()
 def __calculate_imagehash_based_similarity(pair, hash_func, hash_size=16):
     """Compute given hash_func over pair object's images and update pair object's similarity"""
@@ -169,7 +155,7 @@ def __calculate_imagehash_based_similarity(pair, hash_func, hash_size=16):
         image1_handle, image2_handle = __check_files_and_open_with_pil(pair)
         image1 = hash_func(image1_handle, hash_size=hash_size)
         image2 = hash_func(image2_handle, hash_size=hash_size)
-        pair.similarity = float(image1 - image2) / hash_size
+        pair.similarity = round(float(image1 - image2) / (hash_size * hash_size), 3)
     finally:
         # close the image files
         if image1_handle:

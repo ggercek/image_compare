@@ -88,7 +88,7 @@ def __real_main(config):
 
         # Generate a execution summary
         time_end = time.process_time()
-        num_of_skipped_pairs = sum([pair for pair in pairs if pair.skipped])
+        num_of_skipped_pairs = len([pair for pair in pairs if pair.skipped])
 
         logging.info(f"Summary: "
                      f"\n\tInput: {config.input_file}"
