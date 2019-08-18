@@ -78,7 +78,7 @@ class TimeSimilarityCalculation:
         return timed
 
 
-def __check_files_and_open_with_PIL(pair, same_size_enforce=True):
+def __check_files_and_open_with_pil(pair, same_size_enforce=True):
     return __check_files_and_open(pair, same_size_enforce=same_size_enforce, image_read_func=Image.open)
 
 
@@ -119,7 +119,7 @@ def __check_files_and_open(pair, same_size_enforce=True, image_read_func=io.imre
 
 @register_distance(name="ssim")
 @TimeSimilarityCalculation()
-def calculate_ssmi_similarity(pair):
+def calculate_ssim_similarity(pair):
     """Compute the mean structural similarity index between two images.
 
     :param pair: image pair to compare
@@ -160,16 +160,15 @@ def calculate_mse_similarity(pair):
     pair.similarity = round(similarity / float(image1.shape[0] * image1.shape[1]), 3)
 
 
-@register_distance(name="dhash")
 @TimeSimilarityCalculation()
-def calculate_dhash_similarity(pair, hash_size=16):
+def __calculate_imagehash_based_similarity(pair, hash_func, hash_size=16):
     """Compute Difference Hash"""
     image1_handle = None
     image2_handle = None
     try:
-        image1_handle, image2_handle = __check_files_and_open_with_PIL(pair)
-        image1 = imagehash.dhash(image1_handle, hash_size=hash_size)
-        image2 = imagehash.dhash(image2_handle, hash_size=hash_size)
+        image1_handle, image2_handle = __check_files_and_open_with_pil(pair)
+        image1 = hash_func(image1_handle, hash_size=hash_size)
+        image2 = hash_func(image2_handle, hash_size=hash_size)
         pair.similarity = float(image1 - image2) / hash_size
     finally:
         # close the image files
@@ -177,3 +176,23 @@ def calculate_dhash_similarity(pair, hash_size=16):
             image1_handle.close()
         if image2_handle:
             image2_handle.close()
+
+
+@register_distance(name="dhash")
+def calculate_dhash_similarity(pair, hash_size=16):
+    __calculate_imagehash_based_similarity(pair, imagehash.dhash, hash_size=hash_size)
+
+
+@register_distance(name="avghash")
+def calculate_avghash_similarity(pair, hash_size=16):
+    __calculate_imagehash_based_similarity(pair, imagehash.average_hash, hash_size=hash_size)
+
+
+@register_distance(name="phash")
+def calculate_phash_similarity(pair, hash_size=16):
+    __calculate_imagehash_based_similarity(pair, imagehash.phash, hash_size=hash_size)
+
+
+@register_distance(name="whash")
+def calculate_whash_similarity(pair, hash_size=16):
+    __calculate_imagehash_based_similarity(pair, imagehash.whash, hash_size=hash_size)

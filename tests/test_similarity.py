@@ -26,7 +26,8 @@ class TestSimilarity(unittest.TestCase):
         with self.assertRaises(ArgumentError):
             method = get_similarity_measurement("")
 
-class TestSSMISimilarity(unittest.TestCase):
+
+class TestSSIMSimilarity(unittest.TestCase):
     """Tests for `SSIM` method."""
 
     def setUp(self):
@@ -162,14 +163,14 @@ class TestMSESimilarity(unittest.TestCase):
     def test_mse_similarity_of_white_black(self):
         pair = FilePair("files/tests/images/0-0-white.png", "files/tests/images/0-1-black.png")
         self.mse(pair)
-#        assert pair.similarity >= .995, "Files are the opposite, should be one"
+        assert pair.similarity > 0
         assert pair.elapsed > 0, "Elapsed should be bigger than zero"
         assert pair.skipped is False
 
     def test_mse_similarity_of_white_black_inverse_order(self):
         pair = FilePair("files/tests/images/0-1-black.png", "files/tests/images/0-0-white.png")
         self.mse(pair)
-#        assert pair.similarity >= .995, "Files are the opposite, should be one"
+        assert pair.similarity > 0
         assert pair.elapsed > 0, "Elapsed should be bigger than zero"
         assert pair.skipped is False
 
@@ -199,7 +200,7 @@ class TestDHashSimilarity(unittest.TestCase):
         assert pair.similarity == -1.0
         assert pair.elapsed == -1.0
 
-    def test_mse_similarity_of_same_file_white(self):
+    def test_dhash_similarity_of_same_file_white(self):
         pair = FilePair("files/tests/images/0-0-white.png", "files/tests/images/0-0-white.png")
         self.dhash(pair)
         assert pair.similarity <= .005, "Same files should return zero"
@@ -209,6 +210,105 @@ class TestDHashSimilarity(unittest.TestCase):
     def test_dhash_similarity_of_white_black_inverse_order(self):
         pair = FilePair("files/tests/images/small/cat.png", "files/tests/images/small/cat-wm-big.png")
         self.dhash(pair)
-#        assert pair.similarity >= .995, "Files are the opposite, should be one"
+        assert pair.similarity > 0
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+
+class TestAvgHashSimilarity(unittest.TestCase):
+    """Tests for `AvgHash` method."""
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        self.avghash = get_similarity_measurement("avghash")
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_avghash_missing_file_first_argument(self):
+        pair = FilePair("no_such_file_exists.png", "files/tests/images/0-0-white.png")
+        with self.assertRaises(FileError):
+            self.avghash(pair)
+        assert pair.skipped is True
+        assert pair.similarity == -1.0
+        assert pair.elapsed == -1.0
+
+    def test_avghash_similarity_of_same_file_white(self):
+        pair = FilePair("files/tests/images/0-0-white.png", "files/tests/images/0-0-white.png")
+        self.avghash(pair)
+        assert pair.similarity <= .005, "Same files should return zero"
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+    def test_avghash_similarity_of_white_black_inverse_order(self):
+        pair = FilePair("files/tests/images/small/cat.png", "files/tests/images/small/cat-wm-big.png")
+        self.avghash(pair)
+        assert pair.similarity > 0
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+
+class TestPHashSimilarity(unittest.TestCase):
+    """Tests for `PHash` method."""
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        self.phash = get_similarity_measurement("phash")
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_phash_missing_file_first_argument(self):
+        pair = FilePair("no_such_file_exists.png", "files/tests/images/0-0-white.png")
+        with self.assertRaises(FileError):
+            self.phash(pair)
+        assert pair.skipped is True
+        assert pair.similarity == -1.0
+        assert pair.elapsed == -1.0
+
+    def test_phash_similarity_of_same_file_white(self):
+        pair = FilePair("files/tests/images/0-0-white.png", "files/tests/images/0-0-white.png")
+        self.phash(pair)
+        assert pair.similarity <= .005, "Same files should return zero"
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+    def test_phash_similarity_of_white_black_inverse_order(self):
+        pair = FilePair("files/tests/images/small/cat.png", "files/tests/images/small/cat-wm-big.png")
+        self.phash(pair)
+        assert pair.similarity > 0
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+
+class TestWHashSimilarity(unittest.TestCase):
+    """Tests for `WHash` method."""
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        self.whash = get_similarity_measurement("avghash")
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_whash_missing_file_first_argument(self):
+        pair = FilePair("no_such_file_exists.png", "files/tests/images/0-0-white.png")
+        with self.assertRaises(FileError):
+            self.whash(pair)
+        assert pair.skipped is True
+        assert pair.similarity == -1.0
+        assert pair.elapsed == -1.0
+
+    def test_whash_similarity_of_same_file_white(self):
+        pair = FilePair("files/tests/images/0-0-white.png", "files/tests/images/0-0-white.png")
+        self.whash(pair)
+        assert pair.similarity <= .005, "Same files should return zero"
+        assert pair.elapsed > 0, "Elapsed should be bigger than zero"
+        assert pair.skipped is False
+
+    def test_whash_similarity_of_white_black_inverse_order(self):
+        pair = FilePair("files/tests/images/small/cat.png", "files/tests/images/small/cat-wm-big.png")
+        self.whash(pair)
+        assert pair.similarity > 0
         assert pair.elapsed > 0, "Elapsed should be bigger than zero"
         assert pair.skipped is False
