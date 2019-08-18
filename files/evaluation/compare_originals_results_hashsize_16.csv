@@ -1,0 +1,17 @@
+﻿image1,image2,dhash,avghash,phash,whash,nrmse,ssim
+cat.png,nature-1.png,-1,-1,-1,-1,-1,-1
+cat.png,nature-2.png,-1,-1,-1,-1,-1,-1
+cityscape.png,nature-1.png,-1,-1,-1,-1,-1,-1
+cityscape.png,nature-2.png,-1,-1,-1,-1,-1,-1
+nature-1.png,cat.png,-1,-1,-1,-1,-1,-1
+nature-1.png,cityscape.png,-1,-1,-1,-1,-1,-1
+nature-2.png,cat.png,-1,-1,-1,-1,-1,-1
+nature-2.png,cityscape.png,-1,-1,-1,-1,-1,-1
+cat.png,cat.png,0,0,0,0,0,0
+cityscape.png,cityscape.png,0,0,0,0,0,0
+nature-1.png,nature-1.png,0,0,0,0,0,0
+nature-2.png,nature-2.png,0,0,0,0,0,0
+cat.png,cityscape.png,0.461,0.457,0.555,0.453,0.532,0.4
+cityscape.png,cat.png,0.461,0.457,0.555,0.453,0.476,0.4
+nature-1.png,nature-2.png,0.465,0.281,0.492,0.273,0.52,0.38
+nature-2.png,nature-1.png,0.465,0.281,0.492,0.273,0.45,0.38
