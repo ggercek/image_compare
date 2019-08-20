@@ -2,16 +2,8 @@
 Image Compare
 =============
 
-
-.. image:: https://img.shields.io/pypi/v/image_compare.svg
-        :target: https://pypi.python.org/pypi/image_compare
-
 .. image:: https://img.shields.io/travis/ggercek/image_compare.svg
         :target: https://travis-ci.org/ggercek/image_compare
-
-.. image:: https://readthedocs.org/projects/image-compare/badge/?version=latest
-        :target: https://image-compare.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
 
 .. image:: https://pyup.io/repos/github/ggercek/image_compare/shield.svg
         :target: https://pyup.io/repos/github/ggercek/image_compare/
